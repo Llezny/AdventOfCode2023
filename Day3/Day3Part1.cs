@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
 namespace AdventOfCode2023.Day3
 {
     internal class Day3Part1
     {
-        string scheme = new("");
-        Regex regex = new(@"[0-9]+");
+        List<string> scheme = new();
+        Regex regex = new(@"[0-9]+", RegexOptions.Multiline);
         int result = 0;
         int lineLength;
-        int[] dict = new int[1000];
 
         private void GetScheme()
         {
@@ -18,12 +16,12 @@ namespace AdventOfCode2023.Day3
             using (StreamReader read = new StreamReader(fileloc))
             {
                 string line = read.ReadLine();
-                scheme += line;
+                scheme.Add( line );
                 lineLength = line.Length;
        
                 while ((line = read.ReadLine()) != null)
                 {
-                    scheme += line;
+                    scheme.Add(line);
                 }
             }
         }
@@ -31,66 +29,76 @@ namespace AdventOfCode2023.Day3
         public int GetResult()
         {
             GetScheme();
-            var matches = regex.Matches(scheme);
-            foreach(Match match in matches )
+            for( int i = 0; i < scheme.Count; i ++)
             {
-                if(IsPartNumber(match))
+                var matches = regex.Matches(scheme[i]);
+                foreach (Match match in matches)
                 {
-                    if (dict[int.Parse(match.Value)] == 0)
+                    if (IsPartNumber(match, i))
                     {
-
+                        Console.WriteLine(match.Value);
+                        result += int.Parse(match.Value);
                     }
-                    Console.WriteLine(match.Value);
-                    result += ;
                 }
             }
+
             return result;
         }
 
-        private bool IsPartNumber( Match match ) {
+        private bool IsPartNumber( Match match, int lineIdx ) {
 
             var idx = match.Index;
-            bool startsOnLeftBorder = idx % lineLength == 0;
-            bool endsOnRightBorder = (idx + 1) % lineLength == 0;
+            bool startsOnLeftBorder = idx == 0;
+            bool endsOnRightBorder = idx + match.Length == lineLength;
+
+
 
             // Check above
-            var start = Math.Max(0, match.Index - lineLength);
+            var start = idx;
             var end = start + match.Length;
-            for( int i = start; i < end; i++ ) {
-                if (IsSymbol(scheme[i])) {
-                    return true;
+            if (lineIdx > 0)
+            {
+                for (int i = start; i < end; i++)
+                {
+                    if (IsSymbol(scheme[lineIdx - 1][i]))
+                    {
+                        return true;
+                    }
                 }
             }
 
+
             //Check below
-            start = Math.Min(scheme.Length - 1, match.Index + lineLength);
-            end = Math.Min(scheme.Length - 1, start + match.Length);
-            for (int i = start; i < end; i++)
+            start = idx;
+            end = start + match.Length;
+            if(lineIdx + 1 < scheme.Count)
             {
-                if (IsSymbol(scheme[i]))
+                for (int i = start; i < end; i++)
                 {
-                    return true;
+                    if (IsSymbol(scheme[lineIdx + 1][i]))
+                    {
+                        return true;
+                    }
                 }
             }
+
             var targetIdx = 0;
             if ( !startsOnLeftBorder )
             {
                 targetIdx = idx - 1;
                 //left
-                if (targetIdx > 0 && IsSymbol(scheme[idx - 1]))
+                if (targetIdx > 0 && IsSymbol(scheme[lineIdx][idx - 1]))
                 {
                     return true;
                 }
                 //Top left
-                targetIdx = idx - 1 - lineLength;
-                if (targetIdx > 0 && IsSymbol(scheme[targetIdx]))
+                if (lineIdx - 1 > 0 && IsSymbol(scheme[lineIdx - 1][targetIdx]))
                 {
                     return true;
                 }
 
                 //Bottom left
-                targetIdx = idx - 1 + lineLength;
-                if (targetIdx < scheme.Length && IsSymbol(scheme[targetIdx]))
+                if (lineIdx + 1 < scheme.Count && IsSymbol(scheme[lineIdx + 1][targetIdx]))
                 {
                     return true;
                 }
@@ -101,21 +109,21 @@ namespace AdventOfCode2023.Day3
 
                 //Check right
                 targetIdx = idx + match.Length;
-                if (targetIdx < scheme.Length && IsSymbol(scheme[targetIdx]))
+                if (targetIdx < scheme[lineIdx].Length && IsSymbol(scheme[lineIdx][targetIdx]))
                 {
                     return true;
                 }
 
                 //Top right
-                targetIdx = idx + match.Length - lineLength;
-                if (targetIdx > 0 && IsSymbol(scheme[targetIdx]))
+                targetIdx = idx + match.Length;
+                if (lineIdx > 0 && IsSymbol(scheme[lineIdx - 1][targetIdx]))
                 {
                     return true;
                 }
 
                 //Bottom right
-                targetIdx = idx + match.Length + lineLength;
-                if (targetIdx < scheme.Length && IsSymbol(scheme[targetIdx]))
+                targetIdx = idx + match.Length;
+                if (lineIdx + 1 < scheme.Count && IsSymbol(scheme[lineIdx + 1][targetIdx]))
                 {
                     return true;
                 }
@@ -128,7 +136,7 @@ namespace AdventOfCode2023.Day3
         {
             if(!char.IsLetterOrDigit(c) && c != '.')
             {
-                Console.Write(c);
+            //    Console.Write(c);
                 return true;
             }
             return false;
