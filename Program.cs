@@ -32,6 +32,8 @@ namespace AdventOfCode2023
             var d5p1 = new Day5Part1();
             Console.WriteLine($"{nameof(Day5Part1)}, {d5p1.GetResult()}");
 
+            var d5p2 = new Day5Part2();
+            Console.WriteLine($"{nameof(Day5Part2)}, {d5p2.GetResult()}");
         }
     }
 }
