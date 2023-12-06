@@ -29,11 +29,15 @@ namespace AdventOfCode2023
             //var d4p2 = new Day4Part2();
             //Console.WriteLine($"{nameof(Day4Part2)}, {d4p2.GetResult()}");
 
-            var d5p1 = new Day5Part1();
-            Console.WriteLine($"{nameof(Day5Part1)}, {d5p1.GetResult()}");
+            //var d5p1 = new Day5Part1();
+            //Console.WriteLine($"{nameof(Day5Part1)}, {d5p1.GetResult()}");
 
-            var d5p2 = new Day5Part2();
-            Console.WriteLine($"{nameof(Day5Part2)}, {d5p2.GetResult()}");
+            //var d5p2 = new Day5Part2();
+            //Console.WriteLine($"{nameof(Day5Part2)}, {d5p2.GetResult()}");
+
+           //Console.WriteLine($"{nameof(Day6Part1)}, {new Day6Part1().GetResult()}");
+            Console.WriteLine($"{nameof(Day6Part2)}, {new Day6Part2().GetResult()}");
+
         }
     }
 }
